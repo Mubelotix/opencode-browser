@@ -15,6 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Normalize GHCR owner to lowercase
+        id: owner
+        run: |
+          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "owner=$owner" >> "$GITHUB_OUTPUT"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -35,6 +41,6 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/opencode-chrome:latest
-            ghcr.io/${{ toLower(github.repository_owner) }}/opencode-chrome:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.owner }}/opencode-chrome:latest
+            ghcr.io/${{ steps.owner.outputs.owner }}/opencode-chrome:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
