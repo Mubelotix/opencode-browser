@@ -72,6 +72,14 @@ if ! curl -sSf http://127.0.0.1:9222/json/version >/dev/null 2>&1; then
   exit 1
 fi
 
+echo "Attempting to run opencode CLI inside container for a quick self-test..."
+if docker exec "$CONTAINER_NAME" sh -lc "command -v opencode-chrome-devtools >/dev/null 2>&1"; then
+  echo "Running: opencode-chrome-devtools status --browser_url=http://127.0.0.1:9222"
+  docker exec "$CONTAINER_NAME" opencode-chrome-devtools status --browser_url=http://127.0.0.1:9222 || true
+else
+  echo "opencode-chrome-devtools not found in container (CLI may not be installed)."
+fi
+
 echo "Ensuring opencode-chrome-devtools is registered in $OPENCODE_DIR/opencode.json..."
 if [ -f "$OPENCODE_DIR/opencode.json" ]; then
   if command -v jq >/dev/null 2>&1; then
@@ -117,4 +125,5 @@ echo "Configuration complete."
 echo "- Chrome DevTools available: http://127.0.0.1:9222"
 echo "- Container name: $CONTAINER_NAME"
 echo "- Project configured: $OPENCODE_DIR"
-echo "Try: OPENCODE_BROWSER_URL=http://127.0.0.1:9222 npx @different-ai/opencode-browser status"
+echo "To run the OpenCode browser CLI, execute it inside the container (never on the host):"
+echo "  docker exec -it $CONTAINER_NAME opencode-chrome-devtools status --browser_url=http://127.0.0.1:9222"
