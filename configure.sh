@@ -24,6 +24,8 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 GHCR_NAMESPACE="${GHCR_NAMESPACE:-$(whoami)}"
+# normalize namespace to lowercase (GHCR requires lowercase repo names)
+GHCR_NAMESPACE="${GHCR_NAMESPACE,,}"
 IMAGE_REF="${IMAGE_REF:-ghcr.io/${GHCR_NAMESPACE}/opencode-chrome:latest}"
 
 if [ "${1:-}" = "--local-build" ] || [ "${LOCAL_BUILD:-0}" = "1" ]; then
